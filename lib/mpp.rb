@@ -74,11 +74,4 @@ module Mpp
   autoload :VerificationError, "mpp/errors"
   autoload :TransactionPendingError, "mpp/errors"
   autoload :ParseError, "mpp/errors"
-  autoload :InsufficientBalanceError, "mpp/errors"
-  autoload :InvalidSignatureError, "mpp/errors"
-  autoload :SignerMismatchError, "mpp/errors"
-  autoload :AmountExceedsDepositError, "mpp/errors"
-  autoload :DeltaTooSmallError, "mpp/errors"
-  autoload :ChannelNotFoundError, "mpp/errors"
-  autoload :ChannelClosedError, "mpp/errors"
 end

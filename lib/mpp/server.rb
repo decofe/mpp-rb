@@ -4,10 +4,8 @@
 module Mpp
   module Server
     autoload :Defaults, "mpp/server/defaults"
-    autoload :Intent, "mpp/server/intent"
     autoload :FunctionalIntent, "mpp/server/intent"
     autoload :IntentLifecycle, "mpp/server/intent_lifecycle"
-    autoload :Method, "mpp/server/method"
     autoload :Verify, "mpp/server/verify"
     autoload :MppHandler, "mpp/server/mpp_handler"
     autoload :Decorator, "mpp/server/decorator"
