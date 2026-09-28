@@ -24,4 +24,11 @@ class TestTempoDefaults < Minitest::Test
   def test_resolve_currency_unknown_chain_falls_back
     assert_equal D::PATH_USD, D.resolve_currency(chain_id: 99_999)
   end
+
+  def test_default_fee_tokens_include_ousd_only_on_mainnet
+    assert_equal [D::USDC, D::OUSD], D.default_allowed_fee_tokens(4217)
+    assert_equal [D::PATH_USD], D.default_allowed_fee_tokens(42_431)
+    assert_equal [D::PATH_USD], D.default_allowed_fee_tokens(99_999)
+    assert_equal [D::PATH_USD], D.default_allowed_fee_tokens(nil)
+  end
 end

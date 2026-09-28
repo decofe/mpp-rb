@@ -11,6 +11,7 @@ module Mpp
         PATH_USD = "0x20c0000000000000000000000000000000000000"
         USDC = "0x20C000000000000000000000b9537d11c60E8b50"
         PATH_USD_DECIMALS = 6
+        OUSD = "0x20c0000000000000000000006a37DA5C996874BE"
 
         # Testnet (Moderato)
         TESTNET_CHAIN_ID = 42_431
@@ -55,6 +56,13 @@ module Mpp
           return PATH_USD if chain_id.nil?
 
           DEFAULT_CURRENCIES.fetch(chain_id, PATH_USD)
+        end
+
+        sig { params(chain_id: T.nilable(Integer)).returns(T::Array[String]) }
+        def default_allowed_fee_tokens(chain_id)
+          tokens = [default_currency_for_chain(chain_id)]
+          tokens << OUSD if chain_id == CHAIN_ID
+          tokens
         end
 
         sig { params(chain_id: T.nilable(Integer), testnet: T::Boolean).returns(String) }

@@ -654,7 +654,7 @@ module Mpp
           raise Mpp::VerificationError, "No fee token available" unless resolved_fee_token
 
           allowed_fee_tokens = fee_payer_allowed_fee_tokens ||
-            [Defaults.default_currency_for_chain(chain_id).downcase]
+            Defaults.default_allowed_fee_tokens(chain_id)
           unless allowed_fee_tokens.map(&:downcase).include?(resolved_fee_token.downcase)
             raise Mpp::VerificationError,
               "Fee token #{resolved_fee_token} is not allowed by fee payer policy"

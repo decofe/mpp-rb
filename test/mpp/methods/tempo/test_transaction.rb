@@ -469,6 +469,37 @@ class TestTempoTransaction < Minitest::Test
     assert_includes error.message, "not allowed by fee payer policy"
   end
 
+  def test_cosign_accepts_ousd_on_mainnet
+    skip "eth/rlp gems not available" unless eth_and_rlp_available?
+
+    fee_payer = Mpp::Methods::Tempo::Account.from_key("0x#{"22" * 32}")
+    intent = Mpp::Methods::Tempo::ChargeIntent.new
+    Mpp::Methods::Tempo.tempo(intents: {"charge" => intent}, fee_payer: fee_payer)
+    envelope = build_fee_payer_envelope(chain_id: 4217)
+    ousd = Mpp::Methods::Tempo::Defaults::OUSD
+
+    [ousd, ousd.downcase].each do |token|
+      raw_tx, payload = intent.send(:cosign_as_fee_payer, envelope, token)
+      assert_equal pack_hex(ousd), decode_raw_tx(raw_tx, 0x76)[10]
+      assert_equal token, payload.dig("blockStateCalls", 0, "calls", 0, "feeToken")
+    end
+  end
+
+  def test_custom_fee_token_policy_can_exclude_ousd
+    skip "eth/rlp gems not available" unless eth_and_rlp_available?
+
+    fee_payer = Mpp::Methods::Tempo::Account.from_key("0x#{"22" * 32}")
+    intent = Mpp::Methods::Tempo::ChargeIntent.new
+    Mpp::Methods::Tempo.tempo(
+      intents: {"charge" => intent}, fee_payer: fee_payer,
+      fee_payer_allowed_fee_tokens: [Mpp::Methods::Tempo::Defaults::USDC]
+    )
+    error = assert_raises(Mpp::VerificationError) do
+      intent.send(:cosign_as_fee_payer, build_fee_payer_envelope(chain_id: 4217), Mpp::Methods::Tempo::Defaults::OUSD)
+    end
+    assert_equal "Fee token #{Mpp::Methods::Tempo::Defaults::OUSD} is not allowed by fee payer policy", error.message
+  end
+
   # The simulate payload must target the co-signed tx: the recovered sender as
   # `from`, the sponsor fields the node needs (feeToken, feePayerSignature), the
   # payment calls, the expiring nonceKey, the validity window, and validation off.
